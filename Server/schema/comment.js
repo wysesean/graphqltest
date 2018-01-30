@@ -3,6 +3,8 @@ export default `
     _id: String!
     text: String!
     createdAt: String!
+    user: User
+    userId: String!
   }
 
   type Query {
@@ -11,10 +13,10 @@ export default `
   }
 
   type Mutation {
-    createComment(text: String!): Comment
+    createComment(text: String!, userId: String!): Comment
   }
 
   type Subscription {
-   newComment: Comment
+   newComment: Comment!
   }
 `

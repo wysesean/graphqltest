@@ -11,7 +11,7 @@ import { mongoDb } from './mongo-connector';
 
 import { execute, subscribe } from 'graphql';
 import { createServer } from 'http';
-import { SubscriptionServer } from 'subscriptions-transport-ws';
+import { SubscriptionServer } from 'subscriptions-transport-ws'; // From Apollo
 
 
 const PORT = 4000
@@ -25,16 +25,20 @@ export const schema = makeExecutableSchema({
   resolvers
 })
 
-function ipLoggingMiddleware(req, res, next) {
-  console.log('ip:', req.ip)
-  next();
+function authMiddleware(req, res, next) {
+  if(req.headers.cookie.includes('secretpassword')){
+    next();
+  }
+  else {
+    console.log('russian hacker alert')
+  }
 }
 
 const server = express();
 const ws = createServer(server);
 
 server.use('*', cors({ origin: `http://localhost:${PORT}` }));
-server.use(ipLoggingMiddleware)
+server.use(authMiddleware)
 
 server.use('/graphql', bodyParser.json(), graphqlExpress({ schema }));
 server.use('/graphiql', graphiqlExpress({
